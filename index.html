@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Générateur d'Attestation Mobile</title>
+    <!-- Meta viewport pour assurer une bonne adaptation sur mobile -->
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <!-- Inclusion de plusieurs familles de polices via Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto&family=Playfair+Display&family=Courier+Prime&family=Lobster&family=Montserrat&family=Pacifico&family=Bebas+Neue&family=Merriweather&family=Press+Start+2P&family=Oswald&family=Cinzel&family=Dancing+Script&family=Fira+Code&family=Raleway&family=Abril+Fatface&family=Indie+Flower&family=Chakra+Petch&family=Caveat&family=Space+Mono&family=Great+Vibes&display=swap"
+      rel="stylesheet"
+    />
+    <!-- Lien CDN pour Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <!-- Liens vers les fichiers CSS pour les styles de la page -->
+    <link rel="stylesheet" href="css/Style.css" />
+    <link rel="stylesheet" href="css/Text.css" />
+    <link rel="stylesheet" href="css/textOrdi.css" />
+    <link rel="stylesheet" href="css/FormeEtLignes.css" />
+    <link rel="stylesheet" href="css/FormeEtLignesOrdi.css" />
+    <link rel="stylesheet" href="css/qrcodeStyle.css" />
+
+    <!-- Inclusion de la bibliothèque Fabric.js pour manipuler le canvas -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
+  </head>
+  <body>
+    <!-- Conteneur principal-->
+    <div class="mobile-container">
+      <!-- Conteneur pour les contrôles de texte (police, taille, gras, italique) -->
+      <div class="text-controls" id="textControls">
+        <!-- Sélecteur de police -->
+        <select id="fontFamily" onchange="updateTextStyle('fontFamily')">
+          <option value="Arial">Arial</option>
+          <option value="Times New Roman">Times New Roman</option>
+          <option value="Courier New">Courier New</option>
+        </select>
+        <!-- Champ de saisie pour la taille de la police -->
+        <input
+          type="number"
+          id="fontSize"
+          value="20"
+          min="8"
+          max="72"
+          onchange="updateTextStyle('fontSize')"
+        />
+        <!-- Bouton pour basculer le texte en gras -->
+        <button class="style-button" onclick="toggleBold()">B</button>
+        <!-- Bouton pour basculer le texte en italique -->
+        <button class="style-button" onclick="toggleItalic()">I</button>
+      </div>
+      <!-- Conteneur pour le canvas (zone de dessin) -->
+      <div class="canvas-wrapper">
+        <!-- Canvas où les éléments (formes, texte) seront dessinés -->
+        <canvas id="canvas"></canvas>
+      </div>
+      <div class="choix-couleur">
+        <div class="color-picker-container">
+          <div class="picker-row">
+            <div class="conteneur-canvas-principal">
+              <canvas
+                id="canvasPrincipal"
+                class="zone-selection-couleur"
+              ></canvas>
+              <div id="curseurPrincipal" class="curseur"></div>
+            </div>
+            <div class="conteneur-barre-teinte">
+              <canvas id="barreTeinte" class="barre-teinte"></canvas>
+              <div id="curseurTeinte" class="curseur"></div>
+            </div>
+          </div>
+          <div id="apercuCouleur" class="apercu-couleur"></div>
+          <div class="valeurs-couleur">
+            <div id="valeurHex"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Barre d'outils en bas de l'écran -->
+      <div class="toolbar">
+        <!-- Conteneur pour les boutons de la barre d'outils avec défilement horizontal -->
+        <div class="toolbar-scroll">
+          <!-- Bouton pour ajouter du texte -->
+          <button
+            id="selection-texte"
+            class="icon-grid-button"
+            style="font-size: 30px; color: #555; font-weight: 700"
+          >
+            T
+          </button>
+          <!-- Bouton pour ajouter des formes et lignes -->
+          <!-- Bouton unique avec 4 icônes en 2×2 -->
+          <button class="icon-grid-button" id="selection-forme-ligne">
+            <div class="icon-grid">
+              <!-- Icône 1 -->
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M12,21.35l-1.45-1.32C5.4,15.36,2,12.28,2,8.5
+                               C2,5.42,4.42,3,7.5,3c1.74,0,3.41,0.81,4.5,2.09
+                               C13.09,3.81,14.76,3,16.5,3C19.58,3,22,5.42,
+                               22,8.5c0,3.78-3.4,6.86-8.55,11.54L12,21.35z"
+                />
+              </svg>
+              <!-- Icône 2 -->
+              <svg viewBox="0 0 24 24">
+                <rect x="3" y="3" width="18" height="18" />
+              </svg>
+              <!-- Icône 3 -->
+              <svg viewBox="0 0 24 24">
+                <path d="M12,3L2,21h20L12,3z" />
+              </svg>
+              <!-- Icône 4 -->
+              <svg viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="9" />
+              </svg>
+            </div>
+          </button>
+          <button class="icon-grid-button" id="ouverturePalletteCouleur">
+            <i
+              class="fa-solid fa-palette"
+              style="color: #555; font-size: 30px"
+            ></i>
+          </button>
+          <button class="icon-grid-button palletteReste" onclick="copyObject()">
+            <i
+              class="fa-solid fa-clone"
+              style="color: #555; font-size: 30px"
+            ></i>
+          </button>
+          <button class="icon-grid-button palletteReste" id="qrcodeGeneer">
+            <i
+              class="fa-solid fa-qrcode"
+              style="color: #555; font-size: 30px"
+            ></i>
+          </button>
+
+          <button onclick="exportFabricCanvasToPDF()" class="icon-grid-button">
+            <i
+              class="fa-solid fa-cloud-arrow-down"
+              style="color: #555; font-size: 30px"
+            ></i>
+          </button>
+          <!-- Bouton pour supprimer l'objet sélectionné -->
+          <button
+            class="icon-grid-button palletteReste"
+            onclick="deleteSelected()"
+          >
+            <i
+              class="fa-solid fa-trash-can"
+              style="color: #555; font-size: 30px"
+            ></i>
+          </button>
+        </div>
+      </div>
+    </div>
+    <!-- Le QR code -->
+
+    <div class="dark_bg-qr">
+      <div class="surgir-qr">
+        <header>
+          <button class="fermeBtn-qr">&times;</button>
+        </header>
+        <div class="conteneur">
+          <div class="section-saisie">
+            <h2>Générer votre QR Code</h2>
+    
+            <label for="typeContenu">Type de contenu:</label>
+            <select id="typeContenu">
+              <option value="url">URL / Site Web</option>
+              <option value="facebook">Facebook</option>
+              <option value="twitter">Twitter</option>
+              <option value="instagram">Instagram</option>
+              <option value="linkedin">LinkedIn</option>
+              <option value="texte">Texte simple</option>
+            </select>
+    
+            <div id="conteneurSaisie">
+              <label for="contenu">Contenu:</label>
+              <input
+                type="text"
+                id="contenu"
+                placeholder="Entrez l'URL ou le texte"
+              />
+            </div>
+    
+            <label for="couleurQR">Couleur du QR:</label>
+            <input type="color" id="couleurQR" value="#000000" />
+    
+            <label for="couleurFond">Couleur d'arrière-plan:</label>
+            <input type="color" id="couleurFond" value="#ffffff" />
+    
+            <button id="boutonGenerer">Générer QR Code</button>
+          </div>
+    
+          <!-- <div id="qrCodeTemporaire"></div> -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Fenêtre modale pour le formulaire d'ajout de texte -->
+    <div class="dark_bg">
+      <!---------Le conteneur pour les Elements et formes------->
+      <div class="surgir">
+        <!---------Le conteneur pour les Elements et formes------->
+        <header>
+          <button class="fermeBtn">&times;</button>
+          <!-- Bouton de fermeture de la modale -->
+        </header>
+
+        <div class="body">
+          <p class="partie"><strong>Styles de texte par défaut </strong></p>
+          <div class="style-texte-defaut">
+            <div class="texte">
+              <!-- Chaque élément déclenche l'ajout d'un type de texte spécifique sur le canvas -->
+              <h1 id="style-texte" onclick="addText('h1')">Ajouter un titre</h1>
+            </div>
+            <div class="texte">
+              <h2 id="style-texte" onclick="addText('h2')">
+                Ajouter un sous-titre
+              </h2>
+            </div>
+            <div class="texte">
+              <p id="style-texte" onclick="addText('p')">
+                Ajouter des lignes dans le corps du texte
+              </p>
+            </div>
+          </div>
+          <p class="partie"><strong>Combinaisons de polices </strong></p>
+          <div id="texte-font-family">
+            <!-- Chaque carte correspond à une police et déclenche la fonction pour l'ajouter -->
+            <div class="card" onclick="addPoliceCombinaison('Roboto')">
+              Roboto
+            </div>
+            <div
+              class="card"
+              onclick="addPoliceCombinaison('Playfair Display')"
+            >
+              Playfair Display
+            </div>
+            <div class="card" onclick="addPoliceCombinaison('Courier Prime')">
+              Courier Prime
+            </div>
+            <div class="card" onclick="addPoliceCombinaison('Lobster')">
+              Lobster
+            </div>
+            <div class="card" onclick="addPoliceCombinaison('Montserrat')">
+              Montserrat
+            </div>
+            <div class="card" onclick="addPoliceCombinaison('Pacifico')">
+              Pacifico
+            </div>
+            <div class="card" onclick="addPoliceCombinaison('Bebas Neue')">
+              Bebas Neue
+            </div>
+            <div class="card" onclick="addPoliceCombinaison('Merriweather')">
+              Merriweather
+            </div>
+            <div class="card" onclick="addPoliceCombinaison('Press Start 2P')">
+              Press Start 2P
+            </div>
+            <div class="card" onclick="addPoliceCombinaison('Oswald')">
+              Oswald
+            </div>
+            <div class="card" onclick="addPoliceCombinaison('Cinzel')">
+              Cinzel
+            </div>
+            <div class="card" onclick="addPoliceCombinaison('Dancing Script')">
+              Dancing Script
+            </div>
+            <div class="card" onclick="addPoliceCombinaison('Fira Code')">
+              Fira Code
+            </div>
+            <div class="card" onclick="addPoliceCombinaison('Raleway')">
+              Raleway
+            </div>
+            <div class="card" onclick="addPoliceCombinaison('Abril Fatface')">
+              Abril Fatface
+            </div>
+            <div class="card" onclick="addPoliceCombinaison('Indie Flower')">
+              Indie Flower
+            </div>
+            <div class="card" onclick="addPoliceCombinaison('Chakra Petch')">
+              Chakra Petch
+            </div>
+            <div class="card" onclick="addPoliceCombinaison('Caveat')">
+              Caveat
+            </div>
+            <div class="card" onclick="addPoliceCombinaison('Space Mono')">
+              Space Mono
+            </div>
+            <div class="card" onclick="addPoliceCombinaison('Great Vibes')">
+              Great Vibes
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Fenêtre modale pour l'ajout des formes et lignes -->
+    <div class="dark_bg-elements">
+      <!---------Le conteneur de tout pour le font noir------->
+      <div class="surgir-elements">
+        <!---------Le conteneur pour les Elements et formes------->
+        <header>
+          <button class="fermeBtn-element">&times;</button>
+          <!-- Bouton de fermeture de la modale -->
+        </header>
+
+        <div class="body">
+          <p class="partie"><strong>Les lignes</strong></p>
+          <div class="les-different-ligne">
+            <!-- Chaque div représente un type de ligne et déclenche la création de celle-ci -->
+            <div class="line solid" onclick="createLine('solid')"></div>
+            <div class="line dashed" onclick="createLine('dashed')"></div>
+            <div class="line dotted" onclick="createLine('dotted')"></div>
+            <div class="line arrow" onclick="createLine('arrow')"></div>
+            <div
+              class="line double-arrow"
+              onclick="createLine('doubleArrow')"
+            ></div>
+          </div>
+          <p class="partie"><strong>Les formes</strong></p>
+          <div id="les-different-forme">
+            <!-- Chaque image correspond à une forme et déclenche la fonction createShape avec le type correspondant -->
+            <img src="Les images/1.png" onclick="createShape('diamond')" />
+            <img src="Les images/2.png" onclick="createShape('pentagon')" />
+            <img src="Les images/3.png" onclick="createShape('hexagon')" />
+            <img src="Les images/4.png" onclick="createShape('heptagon')" />
+            <img src="Les images/5.png" onclick="createShape('octagon')" />
+            <img src="Les images/6.png" onclick="createShape('star4')" />
+            <img src="Les images/7.png" onclick="createShape('star5')" />
+            <img src="Les images/30.png" onclick="createShape('star6')" />
+            <img src="Les images/8.png" onclick="createShape('star8')" />
+            <img src="Les images/9.png" onclick="createShape('star8Rempli')" />
+            <img src="Les images/10.png" onclick="createShape('multiStar1')" />
+            <img src="Les images/11.png" onclick="createShape('multiStar2')" />
+            <img src="Les images/12.png" onclick="createShape('multiStar3')" />
+            <img src="Les images/13.png" onclick="createShape('multiStar4')" />
+            <img src="Les images/14.png" onclick="createShape('rightArrow')" />
+            <img src="Les images/15.png" onclick="createShape('downArrow')" />
+            <img src="Les images/16.png" onclick="createShape('leftArrow')" />
+            <img src="Les images/17.png" onclick="createShape('upArrow')" />
+            <img src="Les images/18.png" onclick="createShape('doubleArrow')" />
+            <img
+              src="Les images/19.png"
+              onclick="createShape('pentagonDirection')"
+            />
+            <img src="Les images/20.png" onclick="createShape('chevron')" />
+            <img
+              src="Les images/21.png"
+              onclick="createShape('chevronNonPointu')"
+            />
+            <img src="Les images/22.png" onclick="createShape('croix')" />
+            <img
+              src="Les images/23.png"
+              onclick="createShape('decorativeFrame')"
+            />
+            <img
+              src="Les images/24.png"
+              onclick="createShape('paralellogramme')"
+            />
+            <img src="Les images/25.png" onclick="createShape('triangle')" />
+            <img src="Les images/26.png" onclick="createShape('trapeze')" />
+            <img src="Les images/27.png" onclick="createShape('cercle')" />
+            <img src="Les images/28.png" onclick="createShape('demi-cercle')" />
+            <img src="Les images/29.png" onclick="createShape('heart')" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pour desktop -->
+    <div class="surgir-ordi">
+      <!---------Le conteneur pour les Elements et formes------->
+      <header>
+        <button class="fermeBtn">&times;</button>
+        <!-- Bouton de fermeture de la modale pour desktop -->
+      </header>
+
+      <div class="body">
+        <p class="partie"><strong>Styles de texte par défaut </strong></p>
+        <div class="style-texte-defaut">
+          <div class="texte">
+            <!-- Ajout de texte pour desktop avec appel à la fonction addText -->
+            <h1 class="style-texte" onclick="addText('h1')">
+              Ajouter un titre
+            </h1>
+          </div>
+          <div class="texte">
+            <h2 class="style-texte" onclick="addText('h2')">
+              Ajouter un sous-titre
+            </h2>
+          </div>
+          <div class="texte">
+            <p class="style-texte" onclick="addText('p')">
+              Ajouter des lignes dans le corps du texte
+            </p>
+          </div>
+        </div>
+        <p class="partie"><strong>Combinaisons de polices </strong></p>
+        <div id="texte-font-family">
+          <!-- Cartes pour sélectionner les combinaisons de polices pour desktop -->
+          <div class="card" onclick="addPoliceCombinaison('Roboto')">
+            Roboto
+          </div>
+          <div class="card" onclick="addPoliceCombinaison('Playfair Display')">
+            Playfair Display
+          </div>
+          <div class="card" onclick="addPoliceCombinaison('Courier Prime')">
+            Courier Prime
+          </div>
+          <div class="card" onclick="addPoliceCombinaison('Lobster')">
+            Lobster
+          </div>
+          <div class="card" onclick="addPoliceCombinaison('Montserrat')">
+            Montserrat
+          </div>
+          <div class="card" onclick="addPoliceCombinaison('Pacifico')">
+            Pacifico
+          </div>
+          <div class="card" onclick="addPoliceCombinaison('Bebas Neue')">
+            Bebas Neue
+          </div>
+          <div class="card" onclick="addPoliceCombinaison('Merriweather')">
+            Merriweather
+          </div>
+          <div class="card" onclick="addPoliceCombinaison('Press Start 2P')">
+            Press Start 2P
+          </div>
+          <div class="card" onclick="addPoliceCombinaison('Oswald')">
+            Oswald
+          </div>
+          <div class="card" onclick="addPoliceCombinaison('Cinzel')">
+            Cinzel
+          </div>
+          <div class="card" onclick="addPoliceCombinaison('Dancing Script')">
+            Dancing Script
+          </div>
+          <div class="card" onclick="addPoliceCombinaison('Fira Code')">
+            Fira Code
+          </div>
+          <div class="card" onclick="addPoliceCombinaison('Raleway')">
+            Raleway
+          </div>
+          <div class="card" onclick="addPoliceCombinaison('Abril Fatface')">
+            Abril Fatface
+          </div>
+          <div class="card" onclick="addPoliceCombinaison('Indie Flower')">
+            Indie Flower
+          </div>
+          <div class="card" onclick="addPoliceCombinaison('Chakra Petch')">
+            Chakra Petch
+          </div>
+          <div class="card" onclick="addPoliceCombinaison('Caveat')">
+            Caveat
+          </div>
+          <div class="card" onclick="addPoliceCombinaison('Space Mono')">
+            Space Mono
+          </div>
+          <div class="card" onclick="addPoliceCombinaison('Great Vibes')">
+            Great Vibes
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!---------Le conteneur de tout pour le font noir------->
+    <div class="surgir-elements-ordi">
+      <!---------Le conteneur pour les Elements et formes------->
+      <header>
+        <button class="fermeBtn-element">&times;</button>
+        <!-- Bouton de fermeture de la modale -->
+      </header>
+
+      <div class="body">
+        <p class="partie"><strong>Les lignes</strong></p>
+        <div class="les-different-ligne">
+          <!-- Chaque div représente un type de ligne et déclenche la création de celle-ci -->
+          <div class="line solid" onclick="createLine('solid')"></div>
+          <div class="line dashed" onclick="createLine('dashed')"></div>
+          <div class="line dotted" onclick="createLine('dotted')"></div>
+          <div class="line arrow" onclick="createLine('arrow')"></div>
+          <div
+            class="line double-arrow"
+            onclick="createLine('doubleArrow')"
+          ></div>
+        </div>
+        <p class="partie"><strong>Les formes</strong></p>
+        <div id="les-different-forme">
+          <!-- Chaque image correspond à une forme et déclenche la fonction createShape avec le type correspondant -->
+          <img src="Les images/1.png" onclick="createShape('diamond')" />
+          <img src="Les images/2.png" onclick="createShape('pentagon')" />
+          <img src="Les images/3.png" onclick="createShape('hexagon')" />
+          <img src="Les images/4.png" onclick="createShape('heptagon')" />
+          <img src="Les images/5.png" onclick="createShape('octagon')" />
+          <img src="Les images/6.png" onclick="createShape('star4')" />
+          <img src="Les images/7.png" onclick="createShape('star5')" />
+          <img src="Les images/30.png" onclick="createShape('star6')" />
+          <img src="Les images/8.png" onclick="createShape('star8')" />
+          <img src="Les images/9.png" onclick="createShape('star8Rempli')" />
+          <img src="Les images/10.png" onclick="createShape('multiStar1')" />
+          <img src="Les images/11.png" onclick="createShape('multiStar2')" />
+          <img src="Les images/12.png" onclick="createShape('multiStar3')" />
+          <img src="Les images/13.png" onclick="createShape('multiStar4')" />
+          <img src="Les images/14.png" onclick="createShape('rightArrow')" />
+          <img src="Les images/15.png" onclick="createShape('downArrow')" />
+          <img src="Les images/16.png" onclick="createShape('leftArrow')" />
+          <img src="Les images/17.png" onclick="createShape('upArrow')" />
+          <img src="Les images/18.png" onclick="createShape('doubleArrow')" />
+          <img
+            src="Les images/19.png"
+            onclick="createShape('pentagonDirection')"
+          />
+          <img src="Les images/20.png" onclick="createShape('chevron')" />
+          <img
+            src="Les images/21.png"
+            onclick="createShape('chevronNonPointu')"
+          />
+          <img src="Les images/22.png" onclick="createShape('croix')" />
+          <img
+            src="Les images/23.png"
+            onclick="createShape('decorativeFrame')"
+          />
+          <img
+            src="Les images/24.png"
+            onclick="createShape('paralellogramme')"
+          />
+          <img src="Les images/25.png" onclick="createShape('triangle')" />
+          <img src="Les images/26.png" onclick="createShape('trapeze')" />
+          <img src="Les images/27.png" onclick="createShape('cercle')" />
+          <img src="Les images/28.png" onclick="createShape('demi-cercle')" />
+          <img src="Les images/29.png" onclick="createShape('heart')" />
+        </div>
+      </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <!-- Inclusion du fichier JavaScript pour la logique de l'application -->
+    <script src="js/Script.js"></script>
+    <script src="js/Texte.js"></script>
+    <script src="js/FormeEtLignes.js"></script>
+    <script src="js/qrcode.js"></script>
+  </body>
+</html>

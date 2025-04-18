@@ -1,0 +1,133 @@
+/** ==============================
+  🪟 Style de la fenêtre modale 
+================================== **/
+
+.surgir-elements-ordi {
+    position: fixed;
+    top: 5%;
+    left: 7%;
+    /* Marge depuis le bord gauche */
+    width: 50%;
+    /* Largeur fixe de 50% */
+    max-width: 400px;
+    /* Largeur maximale pour éviter qu'elle soit trop large */
+    height: 90%;
+    background: white;
+    border-radius: 5px;
+    /* Coins arrondis */
+    box-shadow: 3px 3px 20px rgba(0, 0, 0, 0.3);
+    /* Ombre légère */
+    overflow: hidden;
+    /* Cache tout débordement */
+    display: flex;
+    /* Changement de none à flex */
+    flex-direction: column;
+    /* Organisation verticale (header + contenu) */
+    box-sizing: border-box;
+    transform: translateY(100%);
+    opacity: 0;
+    visibility: hidden;
+    transition: transform 0.4s ease-out, opacity 0.3s ease-out, visibility 0.3s;
+    z-index: 1000;
+    /* S'assurer qu'il est au-dessus des autres éléments */
+  }
+  
+  /** ==============================
+      🧱 Style du header de la fenêtre
+    ================================== **/
+  .surgir-elements-ordi header {
+    position: sticky;
+    /* Fixe le header même en scrollant */
+    top: 0;
+    background: #f0f0f0;
+    /* Gris très clair */
+    padding: 10px 20px;
+    border-bottom: 1px solid #9c9c9c;
+    /* Ligne de séparation */
+    z-index: 10;
+    /* Reste au-dessus du contenu défilant */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  /** ==============================
+      📝 Style du contenu défilable
+    ================================== **/
+  .surgir-elements-ordi .body {
+    flex: 1;
+    /* Prend tout l'espace restant sous le header */
+    overflow-y: auto;
+    /* Active la barre de défilement verticale */
+    box-sizing: border-box;
+    padding: 15px;
+  }
+  
+  .surgir-elements-ordi header .fermeBtn-element {
+    font-size: 24px;
+    /* Taille du symbole de fermeture */
+    font-weight: bold;
+    padding: 5px 15px;
+    border: 2px solid transparent;
+    border-radius: 50%;
+    background-color: rgba(4, 4, 80, 0.808);
+    /* Gris clair pour rester harmonieux */
+    color: white;
+    /* Gris foncé pour contraste */
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  /* 🟡 Effet au survol (inchangé) */
+  .surgir-elements-ordi header .fermeBtn-element:hover {
+    background-color: rgba(10, 10, 172, 0.808);
+    /* Gris légèrement plus sombre */
+    border-color: #9c9c9c;
+    /* Bordure subtile */
+    color: white;
+    /* Couleur plus foncée */
+    transform: scale(1.1);
+    /* Légère animation */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+  }
+  
+  /* 🟠 Effet au clic (inchangé) */
+  .surgir-elements-ordi header .fermeBtn-element:active {
+    background-color: #a6a6a6;
+    /* Gris foncé temporaire */
+    transform: scale(0.95);
+    /* Effet de pression */
+  }
+  
+  /** ==============================
+        🟢 Effets de visibilité
+    ================================== **/
+  
+  .surgir-elements-ordi.active-selection-elements-ordi {
+    transform: translateY(0);
+    opacity: 1;
+    visibility: visible;
+  }
+  
+  .ajout-margin {
+    position: relative;
+    left: 15%;
+  }
+  
+  /* Media queries pour ajuster sur différents écrans */
+  @media (max-width: 1200px) {
+    .surgir-elements-ordi {
+      width: 60%;
+      /* Un peu plus large sur écrans moyens */
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .surgir-elements-ordi {
+      width: 85%;
+      /* Plus large sur petits écrans */
+      left: 10px;
+      /* Moins d'espace sur petits écrans */
+    }
+  }
+  

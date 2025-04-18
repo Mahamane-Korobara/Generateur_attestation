@@ -1,0 +1,224 @@
+/** ==============================
+  🧱 Style de l'arrière-plan sombre (fond modal)
+================================== **/
+.dark_bg-elements {
+    position: fixed; /* Positionne par rapport à la fenêtre */
+    top: 0;
+    left: 0;
+    min-width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6); /* Noir semi-transparent */
+    display: flex;
+    justify-content: center;
+    align-items: center; /* Centre le contenu */
+    visibility: hidden;
+    z-index: 999; /* Superposition au-dessus des autres éléments */
+    transition: visibility 0.3s;
+  }
+  
+  /** ==============================
+    🪟 Style de la fenêtre modale 
+  ================================== **/
+  .surgir-elements {
+    position: fixed;
+    top: 5%;
+    left: 0;
+    width: 100%;
+    height: 90vh;
+    background: white;
+    border-radius: 5px; /* Coins arrondis */
+    box-shadow: 3px 3px 20px rgba(0, 0, 0, 0.3); /* Ombre légère */
+    overflow: hidden;
+    display: flex;
+    flex-direction: column; /* Organisation verticale (header + contenu) */
+    box-sizing: border-box;
+    transform: translateY(100%);
+    opacity: 0;
+    visibility: hidden;
+    transition: transform 0.4s ease-out, opacity 0.3s ease-out, visibility 0.3s;
+  }
+  
+  /** ==============================
+    🧱 Style du header de la fenêtre
+  ================================== **/
+  .surgir-elements header {
+    position: sticky; /* Fixe le header même en scrollant */
+    top: 0;
+    background: #f0f0f0; /* Gris très clair */
+    padding: 10px 20px;
+    border-bottom: 1px solid #9c9c9c; /* Ligne de séparation */
+    z-index: 10; /* Reste au-dessus du contenu défilant */
+  }
+  
+  /** ==============================
+    📝 Style du contenu défilable
+  ================================== **/
+  .surgir-elements .body {
+    flex: 1; /* Prend tout l’espace restant sous le header */
+    overflow-y: auto; /* Active la barre de défilement verticale */
+    box-sizing: border-box;
+  }
+  
+  /** ==============================
+    🎯 Style du bouton de fermeture 
+  ================================== **/
+  .surgir-elements header .fermeBtn-element {
+    font-size: 24px; /* Taille du symbole de fermeture */
+    font-weight: bold;
+    padding: 5px 15px;
+    border: 2px solid transparent;
+    border-radius: 50%;
+    background-color: rgba(4, 4, 80, 0.808);
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  /* 🟡 Effet au survol */
+  .surgir-elements header .fermeBtn-element:hover {
+    background-color: rgba(10, 10, 172, 0.808);
+    border-color: #9c9c9c; /* Bordure subtile */
+    color: white;
+    transform: scale(1.1); /* Légère animation */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+  }
+  
+  /* 🟠 Effet au clic */
+  .surgir-elements header .fermeBtn-element:active {
+    background-color: #a6a6a6; /* Gris foncé temporaire */
+    transform: scale(0.95); /* Effet de pression */
+  }
+  
+  /** ==============================
+    🟢 Effets de visibilité
+  ================================== **/
+  .dark_bg-elements.active-selection-elements {
+    visibility: visible; /* Rend l’arrière-plan visible */
+  }
+  
+  .surgir-elements.active-selection-elements {
+    transform: translateY(0);
+    opacity: 1;
+    visibility: visible;
+  }
+  
+  .partie {
+    margin: 10px 20px;
+  }
+  
+  /** ==============================
+    🗂️ Conteneur principalpour les formes
+  ================================== **/
+  #les-different-forme,
+  #les-different-ligne {
+    display: flex;
+    flex-wrap: wrap; /* Passe à la ligne automatiquement */
+    justify-content: center; /* Centrage horizontal */
+    gap: 20px; /* Espacement entre les images */
+    padding: 20px;
+    margin-bottom: 20px;
+    margin-top: -10px;
+  }
+  
+  img {
+    width: 50px;
+    height: 50px;
+  }
+  
+  #les-different-ligne {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* Deux colonnes de largeur égale */
+    grid-template-rows: auto auto auto; /* Trois rangées automatiques */
+    gap: 20px;
+    padding: 20px;
+    width: 100%;
+    max-width: 800px; /* Ajustez selon vos besoins */
+    margin: 0 auto;
+  }
+  
+  .line {
+    height: 2px;
+    background-color: black;
+    margin: 20px;
+    position: relative;
+    min-width: 150px; /* Largeur minimale pour chaque ligne */
+  }
+  
+  /* Ligne en pointillés */
+  .dashed {
+    border-top: 2px dashed black;
+    background: none;
+  }
+  
+  /* Ligne en pointillés courts */
+  .dotted {
+    border-top: 2px dotted black;
+    background: none;
+  }
+  
+  /* Ligne flèche simple */
+  .arrow::after {
+    content: "";
+    position: absolute;
+    right: -1px; /* Ajusté pour un meilleur alignement */
+    top: 50%;
+    transform: translateY(-50%) rotate(45deg);
+    width: 8px;
+    height: 8px;
+    border-right: 2px solid black;
+    border-top: 2px solid black;
+  }
+  
+  /* Ligne double flèche */
+  .double-arrow::before,
+  .double-arrow::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    width: 8px;
+    height: 8px;
+    border-right: 2px solid black;
+    border-top: 2px solid black;
+  }
+  
+  .double-arrow::before {
+    left: -1px; /* Ajusté pour un meilleur alignement */
+    transform: translateY(-50%) rotate(-135deg);
+  }
+  
+  .double-arrow::after {
+    right: -1px; /* Ajusté pour un meilleur alignement */
+    transform: translateY(-50%) rotate(45deg);
+  }
+  
+  /* Version tablette (>= 768px) */
+  /* @media (min-width: 768px) {
+    .surgir {
+      top: 10%;
+      left: 50%;
+      width: 70%;
+      height: 80%;
+      transform: translateX(-50%) scale(0.8);
+    }
+    .surgir.active-selection {
+      transform: translateX(-50%) scale(1);
+    }
+    #texte-font-family {
+      justify-content: space-around;
+    } */
+  /* .card {
+      width: calc(33.33% - 15px); Trois cartes par ligne
+    }
+  } */
+  
+  /* Version desktop (>= 1024px) */
+  /* @media (min-width: 1024px) {
+    .surgir {
+      width: 50%;
+      height: 70%;
+    } */
+  /* .card {
+      width: calc(25% - 15px); Quatre cartes par ligne
+    }
+  } */
+  

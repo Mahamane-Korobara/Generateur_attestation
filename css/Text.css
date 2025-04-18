@@ -1,0 +1,231 @@
+/** ==============================
+  🧱 Style de l'arrière-plan sombre (fond modal)
+================================== **/
+.dark_bg {
+    position: fixed; /* Positionne par rapport à la fenêtre */
+    top: 0;
+    left: 0;
+    min-width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6); /* Noir semi-transparent */
+    display: flex;
+    justify-content: center;
+    align-items: center; /* Centre le contenu */
+    visibility: hidden;
+    z-index: 999; /* Superposition au-dessus des autres éléments */
+    transition: visibility 0.3s;
+  }
+  
+  /** ==============================
+    🪟 Style de la fenêtre modale 
+  ================================== **/
+  .surgir {
+    position: fixed;
+    top: 5%;
+    left: 0;
+    width: 100%;
+    height: 90%;
+    background: white;
+    border-radius: 5px; /* Coins arrondis */
+    box-shadow: 3px 3px 20px rgba(0, 0, 0, 0.3); /* Ombre légère */
+    overflow: hidden; /* Cache tout débordement */
+    display: flex;
+    flex-direction: column; /* Organisation verticale (header + contenu) */
+    box-sizing: border-box;
+    transform: translateY(100%);
+    opacity: 0;
+    visibility: hidden;
+    transition: transform 0.4s ease-out, opacity 0.3s ease-out, visibility 0.3s;
+  }
+  
+  /** ==============================
+    🧱 Style du header de la fenêtre
+  ================================== **/
+  .surgir header {
+    position: sticky; /* Fixe le header même en scrollant */
+    top: 0;
+    background: #f0f0f0; /* Gris très clair */
+    padding: 10px 20px;
+    border-bottom: 1px solid #9c9c9c; /* Ligne de séparation */
+    z-index: 10; /* Reste au-dessus du contenu défilant */
+  }
+  
+  /** ==============================
+    📝 Style du contenu défilable
+  ================================== **/
+  .surgir .body {
+    flex: 1; /* Prend tout l’espace restant sous le header */
+    overflow-y: auto; /* Active la barre de défilement verticale */
+    box-sizing: border-box;
+  }
+  
+  /** ==============================
+    🎯 Style du bouton de fermeture 
+  ================================== **/
+  .surgir header .fermeBtn {
+    font-size: 24px; /* Taille du symbole de fermeture */
+    font-weight: bold;
+    padding: 5px 15px;
+    border: 2px solid transparent;
+    border-radius: 50%;
+    background-color: rgba(4, 4, 80, 0.808); /* Gris clair pour rester harmonieux */
+    color: white; /* Gris foncé pour contraste */
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  /* 🟡 Effet au survol */
+  .surgir header .fermeBtn:hover {
+    background-color: rgba(10, 10, 172, 0.808); /* Gris légèrement plus sombre */
+    border-color: #9c9c9c; /* Bordure subtile */
+    color: white; /* Couleur plus foncée */
+    transform: scale(1.1); /* Légère animation */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+  }
+  
+  /* 🟠 Effet au clic */
+  .surgir header .fermeBtn:active {
+    background-color: #a6a6a6; /* Gris foncé temporaire */
+    transform: scale(0.95); /* Effet de pression */
+  }
+  
+  /** ==============================
+    🟢 Effets de visibilité
+  ================================== **/
+  .dark_bg.active-selection {
+    visibility: visible; /* Rend l’arrière-plan visible */
+  }
+  
+  .surgir.active-selection {
+    transform: translateY(0);
+    opacity: 1;
+    visibility: visible;
+  }
+  
+  /** ==============================
+    📌 Style des sections intérieures
+  ================================== **/
+  .partie {
+    margin: 10px 20px;
+  }
+  
+  .style-texte-defaut {
+    display: flex;
+    flex-direction: column; /* Organisation verticale */
+    justify-content: center;
+    align-items: center;
+    gap: 10px; /* Espacement entre les éléments */
+  }
+  
+  /* Zone de texte avec bordure et padding */
+  .texte {
+    border: 1px solid #e0e0e0;
+    width: 90%;
+    border-radius: 5px;
+    padding: 20px;
+    cursor: pointer;
+  }
+  
+  /** ==============================
+    🗂️ Conteneur principal des cartes 
+  ================================== **/
+  #texte-font-family {
+    display: flex;
+    flex-wrap: wrap; /* Passe à la ligne automatiquement */
+    justify-content: center; /* Centrage horizontal */
+    gap: 20px; /* Espacement entre les cartes */
+    padding: 20px;
+    margin-bottom: 20px;
+    margin-top: -10px;
+  }
+  
+  /** ==============================
+    🎴 Style général des cartes
+  ================================== **/
+  .card {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: calc(50% - 10px); /* Deux cartes par ligne */
+    height: 150px;
+    padding: 20px;
+    background-color: #f0f0f0; /* Gris clair */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Ombre légère */
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: bold;
+    box-sizing: border-box;
+    transition: transform 0.3s ease; /* Animation fluide */
+    cursor: pointer;
+  }
+  
+  /* 🟡 Effet au survol des cartes */
+  .card:hover {
+    transform: translateY(-5px); /* Léger déplacement vers le haut */
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2); /* Ombre plus marquée */
+  }
+  
+  /** ==============================
+    🖋️ Polices différentes pour chaque carte
+  ================================== **/
+  .card:nth-child(1) {
+    font-family: "Roboto", sans-serif;
+  }
+  .card:nth-child(2) {
+    font-family: "Playfair Display", serif;
+  }
+  .card:nth-child(3) {
+    font-family: "Courier Prime", monospace;
+  }
+  .card:nth-child(4) {
+    font-family: "Lobster", cursive;
+  }
+  .card:nth-child(5) {
+    font-family: "Montserrat", sans-serif;
+  }
+  .card:nth-child(6) {
+    font-family: "Pacifico", cursive;
+  }
+  .card:nth-child(7) {
+    font-family: "Bebas Neue", sans-serif;
+  }
+  .card:nth-child(8) {
+    font-family: "Merriweather", serif;
+  }
+  .card:nth-child(9) {
+    font-family: "Press Start 2P", monospace;
+  }
+  .card:nth-child(10) {
+    font-family: "Oswald", sans-serif;
+  }
+  .card:nth-child(11) {
+    font-family: "Cinzel", serif;
+  }
+  .card:nth-child(12) {
+    font-family: "Dancing Script", cursive;
+  }
+  .card:nth-child(13) {
+    font-family: "Fira Code", monospace;
+  }
+  .card:nth-child(14) {
+    font-family: "Raleway", sans-serif;
+  }
+  .card:nth-child(15) {
+    font-family: "Abril Fatface", serif;
+  }
+  .card:nth-child(16) {
+    font-family: "Indie Flower", cursive;
+  }
+  .card:nth-child(17) {
+    font-family: "Chakra Petch", sans-serif;
+  }
+  .card:nth-child(18) {
+    font-family: "Caveat", cursive;
+  }
+  .card:nth-child(19) {
+    font-family: "Space Mono", monospace;
+  }
+  .card:nth-child(20) {
+    font-family: "Great Vibes", cursive;
+  }
+  
