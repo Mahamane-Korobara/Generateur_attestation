@@ -58,7 +58,7 @@ Une application web responsive permettant de créer des attestations personnalis
 
 1. Clonez le repository :
 \`\`\`bash
-git clone https://github.com/votre-username/attestation-generator.git
+git clone https://github.com/Mahamane-Korobara/Generateur_attestation.git
 \`\`\`
 
 2. Ouvrez le dossier du projet :
